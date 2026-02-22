@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – Hospital Management System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="icon">🏥</span>
+                Shri Hospital
+            </div>
+            <img src="/images/shri_hospital_logo.png" alt="Hospital" class="sidebar-img">
+            <ul class="sidebar-nav">
+                <li><a href="#" class="nav-link active" data-section="dashboard-section" onclick="loadSection('dashboard'); return false;">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a></li>
+                <li data-role="Admin,Doctor,Receptionist,Staff"><a href="#" class="nav-link" data-section="appointments-section" onclick="loadSection('appointments'); return false;">
+                    <span class="nav-icon">📅</span> Appointments
+                </a></li>
+                <li data-role="Admin,Doctor,Receptionist,Staff"><a href="#" class="nav-link" data-section="patients-section" onclick="loadSection('patients'); return false;">
+                    <span class="nav-icon">👥</span> Patients
+                </a></li>
+                <li data-role="Admin,Staff"><a href="#" class="nav-link" data-section="medical-waste-section" onclick="loadSection('medical-waste'); return false;">
+                    <span class="nav-icon">♻️</span> Medical Waste
+                </a></li>
+                <li data-role="Admin,Receptionist"><a href="#" class="nav-link" data-section="invoices-section" onclick="loadSection('invoices'); return false;">
+                    <span class="nav-icon">📋</span> Invoices
+                </a></li>
+                <li data-role="Admin"><a href="#" class="nav-link" data-section="inventory-section" onclick="loadSection('inventory'); return false;">
+                    <span class="nav-icon">📦</span> Inventory
+                </a></li>
+                <li><a href="#" class="nav-link" data-section="reports-section" onclick="loadSection('reports'); return false;">
+                    <span class="nav-icon">📈</span> Reports
+                </a></li>
+                <li><a href="#" class="nav-link" onclick="loadSection('dashboard'); return false;">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a></li>
+                <li><a href="#" class="nav-link" onclick="logout(); return false;">
+                    <span class="nav-icon">🚪</span> Logout
+                </a></li>
+            </ul>
+        </aside>
+
+        <div class="main-wrap">
+            <header class="top-header">
+                <a href="#" id="backToDashboardBtn" class="back-btn back-btn-dashboard" onclick="loadSection('dashboard'); return false;" style="display: none;">← Back to Dashboard</a>
+                <input type="text" class="header-search" placeholder="Search patients, appointments...">
+                <div class="header-actions">
+                    <button type="button" class="icon-btn" title="Notifications">🔔</button>
+                    <div style="display: flex; align-items: center;">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <span id="userRole" class="user-role-badge"></span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="dashboard-main">
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="section active">
+                    <div class="hero-card">
+                        <div class="hero-card-text">
+                            <h2>Welcome to Shri Hospital</h2>
+                            <p>Manage appointments, patients, and operations from one place.</p>
+                        </div>
+                        <a href="#" onclick="loadSection('appointments'); return false;" class="hero-card-btn">Book Appointment</a>
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&q=80" alt="Doctor" class="hero-card-img">
+                    </div>
+
+                    <div id="dashboardStats" class="dashboard"></div>
+
+                    <div class="dashboard-content-grid">
+                        <div>
+                            <div class="card">
+                                <h3>Recent Appointments</h3>
+                                <div id="recentAppointments"></div>
+                            </div>
+                            <div class="card">
+                                <h3>Patient Statistics</h3>
+                                <div id="patientStats"></div>
+                            </div>
+                            <div class="card">
+                                <h3>Completed Appointments</h3>
+                                <div id="completedAppointmentsList"></div>
+                            </div>
+                            <div class="card">
+                                <h3>Medical Waste by Category</h3>
+                                <div id="wasteChart"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card calendar-widget">
+                                <h3>This Month</h3>
+                                <div class="calendar-grid" id="miniCalendar">
+                                    <span class="day-name">Sun</span><span class="day-name">Mon</span><span class="day-name">Tue</span><span class="day-name">Wed</span><span class="day-name">Thu</span><span class="day-name">Fri</span><span class="day-name">Sat</span>
+                                    <!-- Filled by JS or static sample -->
+                                </div>
+                            </div>
+                            <div class="card">
+                                <h3>Response Rate</h3>
+                                <div class="progress-ring-wrap">
+                                    <div class="progress-ring">
+                                        <div class="progress-ring-inner">90%</div>
+                                    </div>
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">Total response</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Patients Section -->
+                <section id="patients-section" class="section" style="display: none;" data-role="Admin,Doctor,Receptionist,Staff">
+                    <div class="section-header-with-back">
+                        <button type="button" class="back-btn back-btn-inline" onclick="loadSection('dashboard'); return false;">← Back</button>
+                    </div>
+                    <h1>Patient Management</h1>
+                    <button class="btn btn-primary" onclick="openPatientModal()" data-role="Admin,Receptionist">Add New Patient</button>
+                    <div class="search-bar" style="margin: 1rem 0;">
+                        <input type="text" id="patientSearch" placeholder="Search patients..." onkeyup="loadPatients()">
+                        <select id="patientFilter" onchange="loadPatients()">
+                            <option value="">All Patients</option>
+                            <option value="active">Active</option>
+                        </select>
+                    </div>
+                    <div id="patientsList"></div>
+                </section>
+
+                <!-- Appointments Section -->
+                <section id="appointments-section" class="section" style="display: none;" data-role="Admin,Doctor,Receptionist,Staff">
+                    <div class="section-header-with-back">
+                        <button type="button" class="back-btn back-btn-inline" onclick="loadSection('dashboard'); return false;">← Back</button>
+                    </div>
+                    <h1>Appointment Management</h1>
+                    <button class="btn btn-primary" onclick="openAppointmentModal()" data-role="Admin,Receptionist">Book Appointment</button>
+                    <div class="search-bar" style="margin: 1rem 0;">
+                        <select id="appointmentStatus" onchange="loadAppointments()">
+                            <option value="">All Status</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div id="appointmentsList"></div>
+                </section>
+
+                <!-- Medical Waste Section -->
+                <section id="medical-waste-section" class="section" style="display: none;" data-role="Admin,Staff">
+                    <div class="section-header-with-back">
+                        <button type="button" class="back-btn back-btn-inline" onclick="loadSection('dashboard'); return false;">← Back</button>
+                    </div>
+                    <h1>Medical Waste Disposal Tracking</h1>
+                    <button class="btn btn-primary" onclick="openWasteModal()" data-role="Admin,Staff">Record Waste Entry</button>
+                    <div class="search-bar" style="margin: 1rem 0;">
+                        <select id="wasteCategory" onchange="loadWaste()">
+                            <option value="">All Categories</option>
+                            <option value="Infectious">Infectious</option>
+                            <option value="Sharps">Sharps</option>
+                            <option value="Chemical">Chemical</option>
+                            <option value="General">General</option>
+                            <option value="Pathological">Pathological</option>
+                            <option value="Pharmaceutical">Pharmaceutical</option>
+                        </select>
+                        <select id="wasteStatus" onchange="loadWaste()">
+                            <option value="">All Status</option>
+                            <option value="Collected">Collected</option>
+                            <option value="Stored">Stored</option>
+                            <option value="Processed">Processed</option>
+                            <option value="Disposed">Disposed</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="generateWasteReport()">Generate Report</button>
+                    </div>
+                    <div id="wasteList"></div>
+                </section>
+
+                <!-- Invoices Section -->
+                <section id="invoices-section" class="section" style="display: none;" data-role="Admin,Receptionist">
+                    <div class="section-header-with-back">
+                        <button type="button" class="back-btn back-btn-inline" onclick="loadSection('dashboard'); return false;">← Back</button>
+                    </div>
+                    <h1>Billing & Invoices</h1>
+                    <button class="btn btn-primary" onclick="openInvoiceModal()" data-role="Admin,Receptionist">Create Invoice</button>
+                    <div class="search-bar" style="margin: 1rem 0;">
+                        <select id="invoiceStatus" onchange="loadInvoices()">
+                            <option value="">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Partial">Partial</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                    <div id="invoicesList"></div>
+                </section>
+
+                <!-- Reports Section -->
+                <section id="reports-section" class="section" style="display: none;">
+                    <div class="section-header-with-back">
+                        <button type="button" class="back-btn back-btn-inline" onclick="loadSection('dashboard'); return false;">← Back</button>
+                    </div>
+                    <h1>Reports</h1>
+                    <div class="card">
+                        <h3>Patient Report</h3>
+                        <p style="margin-bottom: 1rem; color: var(--text-muted);">Generate and print a report of all patient details.</p>
+                        <button type="button" class="btn btn-primary" onclick="printAllPatientsReport()">🖨️ Print All Patient Details</button>
+                    </div>
+                </section>
+
+                <!-- Inventory Section -->
+                <section id="inventory-section" class="section" style="display: none;" data-role="Admin">
+                    <div class="section-header-with-back">
+                        <button type="button" class="back-btn back-btn-inline" onclick="loadSection('dashboard'); return false;">← Back</button>
+                    </div>
+                    <h1>Inventory Management</h1>
+                    <button class="btn btn-primary" onclick="openInventoryModal()" data-role="Admin">Add Stock Item</button>
+                    <div class="search-bar" style="margin: 1rem 0;">
+                        <input type="text" id="inventorySearch" placeholder="Search items..." onkeyup="loadInventory()">
+                        <button class="btn btn-warning" onclick="loadLowStockItems()">Low Stock Items</button>
+                    </div>
+                    <div id="inventoryList"></div>
+                </section>
+            </main>
+            <footer class="dashboard-footer">
+                <p>Created by <strong>Mayur Wagh</strong></p>
+                <p>&copy; 2024 Hospital Management System. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modals (unchanged structure for JS) -->
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Patient</h2>
+                <button class="close-btn" onclick="closeModal('patientModal')">&times;</button>
+            </div>
+            <form id="patientForm" onsubmit="savePatient(event)">
+                <div class="form-group">
+                    <label>Search or Create Patient</label>
+                    <input type="text" placeholder="Search patient by name or ID..." id="patientSearchModal" style="margin-bottom: 0.5rem;" oninput="filterPatientList()">
+                    <select id="patientListSelect" size="5" style="margin-bottom: 0.5rem; width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;" onchange="selectExistingPatient()">
+                        <option value="">-- Create New Patient --</option>
+                    </select>
+                    <small style="color: #666;">Select from list or fill details below to create new</small>
+                </div>
+                <hr style="margin: 1rem 0;">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" name="dateOfBirth" required>
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select name="gender" required>
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea name="address"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Blood Type</label>
+                    <select name="bloodType">
+                        <option value="">Select</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Patient</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Book Appointment</h2>
+                <button class="close-btn" onclick="closeModal('appointmentModal')">&times;</button>
+            </div>
+            <form id="appointmentForm" onsubmit="saveAppointment(event)">
+                <div class="form-group">
+                    <label>Select Patient</label>
+                    <input type="text" placeholder="Search patient by name..." id="appointmentPatientSearch" style="margin-bottom: 0.5rem;" oninput="filterPatientOptions()">
+                    <select name="patientId" required id="appointmentPatientSelect" size="5">
+                        <option value="">-- Select Patient --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Select Doctor</label>
+                    <input type="text" placeholder="Search doctor by name..." id="appointmentDoctorSearch" style="margin-bottom: 0.5rem;" oninput="filterDoctorOptions()">
+                    <select name="doctorId" required id="appointmentDoctorSelect" size="5">
+                        <option value="">-- Select Doctor --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Appointment Date</label>
+                    <input type="date" name="appointmentDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Time Slot</label>
+                    <input type="time" name="timeSlot" required>
+                </div>
+                <div class="form-group">
+                    <label>Reason</label>
+                    <textarea name="reason"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Book Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="wasteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Record Medical Waste</h2>
+                <button class="close-btn" onclick="closeModal('wasteModal')">&times;</button>
+            </div>
+            <form id="wasteForm" onsubmit="saveWaste(event)">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" required>
+                        <option value="">Select</option>
+                        <option value="Infectious">Infectious</option>
+                        <option value="Sharps">Sharps</option>
+                        <option value="Chemical">Chemical</option>
+                        <option value="General">General</option>
+                        <option value="Pathological">Pathological</option>
+                        <option value="Pharmaceutical">Pharmaceutical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <select name="departmentId" required id="wasteDepartmentSelect">
+                        <option value="">Select department</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" name="quantity" required min="0">
+                </div>
+                <div class="form-group">
+                    <label>Unit</label>
+                    <select name="unit">
+                        <option value="kg">kg</option>
+                        <option value="liters">liters</option>
+                        <option value="units">units</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Hazard Level</label>
+                    <select name="hazardLevel">
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Collected">Collected</option>
+                        <option value="Stored">Stored</option>
+                        <option value="Processed">Processed</option>
+                        <option value="Disposed">Disposed</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Record Waste</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Invoice</h2>
+                <button class="close-btn" onclick="closeModal('invoiceModal')">&times;</button>
+            </div>
+            <form id="invoiceForm" onsubmit="saveInvoice(event)">
+                <div style="background: #e8f4f8; padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.9rem; color: #333;">
+                    <strong>📋 Invoice Steps:</strong><br>
+                    1️⃣ Select Patient<br>
+                    2️⃣ Add Items (description & amount)<br>
+                    3️⃣ Click "Create Invoice"
+                </div>
+                <div class="form-group">
+                    <label>Step 1: Select Patient <span style="color: red;">*</span></label>
+                    <input type="text" placeholder="Search patient by name or ID..." id="invoicePatientSearch" style="margin-bottom: 0.5rem;" oninput="filterInvoicePatientOptions()">
+                    <select name="patientId" required id="invoicePatientSelect" size="5" onchange="onInvoicePatientSelected()">
+                        <option value="">-- Select Patient --</option>
+                    </select>
+                    <div id="invoicePatientIndicator" style="display: none; margin-top: 0.5rem; padding: 0.5rem; background: #d4edda; color: #155724; border-radius: 4px; text-align: center;"></div>
+                </div>
+                <hr style="margin: 1rem 0;">
+                <div class="form-group">
+                    <label>Step 2: Add Items <span style="color: red;">*</span></label>
+                    <small style="color: #666; display: block; margin-bottom: 0.5rem;">Add each service, medication, or procedure as a separate item</small>
+                    <input type="text" placeholder="E.g., Consultation, Lab Test, Medicine..." id="invoiceItemDesc">
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" placeholder="E.g., 500.00" id="invoiceAmount" min="0" step="0.01">
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addInvoiceItem()" style="width: 100%; margin-bottom: 1rem;">+ Add Item</button>
+                <div id="invoiceItems" style="margin: 1rem 0; padding: 1rem; background: #f5f5f5; border-radius: 4px; min-height: 50px;">
+                    <em style="color: #999;">No items added yet</em>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">✓ Create Invoice</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Record Payment</h2>
+                <button class="close-btn" onclick="closeModal('paymentModal')">&times;</button>
+            </div>
+            <form onsubmit="submitPayment(event)">
+                <input type="hidden" id="paymentModalInvoiceId" value="">
+                <div class="form-group">
+                    <label>Amount to Pay</label>
+                    <input type="number" id="paymentAmount" step="0.01" min="0.01" required placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="paymentMethod">
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Record Payment</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="receiptModal" class="modal">
+        <div class="modal-content receipt-modal-content">
+            <div class="modal-header">
+                <h2>Bill Receipt</h2>
+                <div>
+                    <button type="button" class="btn btn-secondary" onclick="printReceipt()">Print Receipt</button>
+                    <button class="close-btn" onclick="closeReceiptModal()" style="margin-left: 0.5rem;">&times;</button>
+                </div>
+            </div>
+            <div id="receiptContent" class="receipt-content"></div>
+        </div>
+    </div>
+
+    <div id="inventoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Stock Item</h2>
+                <button class="close-btn" onclick="closeModal('inventoryModal')">&times;</button>
+            </div>
+            <form id="inventoryForm" onsubmit="saveInventory(event)">
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" id="inventoryCategorySelect" required>
+                        <option value="">Select category</option>
+                        <option value="Medication">Medication</option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Consumables">Consumables</option>
+                        <option value="Supplies">Supplies</option>
+                        <option value="Surgical">Surgical</option>
+                        <option value="Lab">Lab</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <select name="departmentId" id="inventoryDepartmentSelect">
+                        <option value="">No department</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" name="quantity" required min="0">
+                </div>
+                <div class="form-group">
+                    <label>Unit Price</label>
+                    <input type="number" name="unitPrice" required min="0" step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Add Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            initializeRoleBasedUI();
+            renderMiniCalendar();
+            setUserAvatar();
+        });
+
+        function setUserAvatar() {
+            var user = getCurrentUser();
+            var el = document.getElementById('userAvatar');
+            if (el && user && user.name) {
+                var parts = user.name.split(' ');
+                el.textContent = parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : (user.name[0] || 'U').toUpperCase();
+            }
+        }
+
+        function renderMiniCalendar() {
+            var grid = document.getElementById('miniCalendar');
+            if (!grid) return;
+            var d = new Date();
+            var year = d.getFullYear();
+            var month = d.getMonth();
+            var first = new Date(year, month, 1);
+            var last = new Date(year, month + 1, 0);
+            var startDay = first.getDay();
+            var days = last.getDate();
+            var today = d.getDate();
+            var html = '';
+            for (var i = 0; i < startDay; i++) html += '<span class="day"></span>';
+            for (var j = 1; j <= days; j++) {
+                var cls = 'day';
+                if (j === today) cls += ' today';
+                html += '<span class="' + cls + '">' + j + '</span>';
+            }
+            grid.innerHTML = grid.innerHTML + html;
+        }
+    </script>
+</body>
+</html>
