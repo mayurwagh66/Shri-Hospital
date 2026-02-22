@@ -5,6 +5,30 @@ A comprehensive web-based Hospital Management System built with Node.js, Express
 ## Deploy Link
 https://shri-hospital-ydb.vercel.app/
 
+## Screenshots
+<img width="1897" height="903" alt="img1" src="https://github.com/user-attachments/assets/8a772fb0-fb54-4e39-83d5-b993f32a6de9" />
+
+<img width="1873" height="878" alt="img2" src="https://github.com/user-attachments/assets/bfd3b8e4-5fae-4c82-8b07-40edb13bee49" />
+
+
+<img width="1612" height="843" alt="img3" src="https://github.com/user-attachments/assets/c7aaa1f4-4a54-4e9f-b8c1-02b81bbd16da" />
+
+<img width="1876" height="897" alt="img4" src="https://github.com/user-attachments/assets/e269de26-022d-4441-9627-3ced4eb02906" />
+
+
+<img width="1898" height="913" alt="img5" src="https://github.com/user-attachments/assets/9466d019-3e63-47fe-a1fd-174152b41ea6" />
+
+<img width="1837" height="897" alt="img6" src="https://github.com/user-attachments/assets/03467989-6205-4812-9544-9ea1e492d71f" />
+
+<img width="1877" height="895" alt="img7" src="https://github.com/user-attachments/assets/fb90f638-5be2-4a9d-8ae4-76afae32598a" />
+
+<img width="1860" height="866" alt="img8" src="https://github.com/user-attachments/assets/3c22fb28-b40c-4083-9cf6-7d3ae6232bb5" />
+
+<img width="1543" height="837" alt="img9" src="https://github.com/user-attachments/assets/911d4270-9a33-4824-9557-81ca786ef876" />
+
+<img width="1910" height="467" alt="img10" src="https://github.com/user-attachments/assets/73a8fb4b-fadd-4303-a313-c6d337bda4af" />
+
+
 ## Features
 
 ### 1. User Authentication & Role Management
@@ -50,30 +74,6 @@ https://shri-hospital-ydb.vercel.app/
 - Patient and appointment statistics
 - Medical waste summary reports
 - Export functionality for reports
-
-## Screenshots
-<img width="1897" height="903" alt="img1" src="https://github.com/user-attachments/assets/8a772fb0-fb54-4e39-83d5-b993f32a6de9" />
-
-<img width="1873" height="878" alt="img2" src="https://github.com/user-attachments/assets/bfd3b8e4-5fae-4c82-8b07-40edb13bee49" />
-
-
-<img width="1612" height="843" alt="img3" src="https://github.com/user-attachments/assets/c7aaa1f4-4a54-4e9f-b8c1-02b81bbd16da" />
-
-<img width="1876" height="897" alt="img4" src="https://github.com/user-attachments/assets/e269de26-022d-4441-9627-3ced4eb02906" />
-
-
-<img width="1898" height="913" alt="img5" src="https://github.com/user-attachments/assets/9466d019-3e63-47fe-a1fd-174152b41ea6" />
-
-<img width="1837" height="897" alt="img6" src="https://github.com/user-attachments/assets/03467989-6205-4812-9544-9ea1e492d71f" />
-
-<img width="1877" height="895" alt="img7" src="https://github.com/user-attachments/assets/fb90f638-5be2-4a9d-8ae4-76afae32598a" />
-
-<img width="1860" height="866" alt="img8" src="https://github.com/user-attachments/assets/3c22fb28-b40c-4083-9cf6-7d3ae6232bb5" />
-
-<img width="1543" height="837" alt="img9" src="https://github.com/user-attachments/assets/911d4270-9a33-4824-9557-81ca786ef876" />
-
-<img width="1910" height="467" alt="img10" src="https://github.com/user-attachments/assets/73a8fb4b-fadd-4303-a313-c6d337bda4af" />
-
 
 
 ## Tech Stack
