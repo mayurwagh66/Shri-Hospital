@@ -18,13 +18,21 @@ const inventoryRoutes = require('./routes/inventoryRoutes');
 
 const app = express();
 
-// Connect to Database
-connectDB();
-
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Initialize database connection middleware (with caching for serverless)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -37,6 +45,11 @@ app.use('/api/invoices', invoiceRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/wards', wardRoutes);
 app.use('/api/inventory', inventoryRoutes);
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date() });
+});
 
 // Static Pages
 app.get('/', (req, res) => {
@@ -59,7 +72,15 @@ app.use((req, res) => {
 // Error Handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Only start server if not running on Vercel (serverless)
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`[Local] Server running on port ${PORT}`);
+    console.log(`[Local] Database: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/shri-hospital'}`);
+  });
+} else {
+  console.log('[Vercel] App initialized for serverless functions');
+}
+
+module.exports = app;
